@@ -1,20 +1,17 @@
-terraform {
-  required_version = ">= 1.0"
-}
+provider "null" {}
 
-resource "null_resource" "create_file" {
+resource "null_resource" "create_dir_file" {
   provisioner "remote-exec" {
-    inline = [
-      "echo 'File created by Terraform via Jenkins Pipeline' > /root/jenkins_terraform.txt",
-      "echo 'Created at: $(date)' >> /root/jenkins_terraform.txt"
-    ]
-
     connection {
-      type              = "ssh"
-      host              = var.server_ip
-      user              = var.server_user
-      password          = var.server_password
-      host_key_checking = false
+      type        = "ssh"
+      host        = "your_server_ip"
+      user        = "your_ssh_user"
+      private_key = file("~/.ssh/id_rsa")
     }
+
+    inline = [
+      "mkdir -p /tmp/mydir",
+      "echo 'Hello from Terraform!' > /tmp/mydir/hello.txt"
+    ]
   }
 }
