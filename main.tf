@@ -1,26 +1,26 @@
 terraform {
   required_providers {
-    linux = {
-      source  = "mavidser/linux"
-      version = "1.0.2"
+    null = {
+      source  = "hashicorp/null"
+      version = "3.2.4"
     }
   }
 }
 
-provider "linux" {
-  host     = "192.168.1.190"
-  port     = 22
-  user     = "root"
-  password = "redhat"
-}
+provider "null" {}
 
-# Create a file on the remote Linux server
-resource "linux_file" "myfile" {
-  path    = "/mnt/myfile.txt"
-  content = "Hello from Terraform via Jenkins!"
-}
+resource "null_resource" "create_dir_file" {
+  provisioner "remote-exec" {
+    connection {
+      type     = "ssh"
+      host     = "192.168.1.190"
+      user     = "root"
+      password = "redhat"
+    }
 
-# Example: Create a directory
-resource "linux_directory" "mydir" {
-  path = "/mnt/mydir"
+    inline = [
+      "mkdir -p /mnt/mydir",
+      "echo 'Hello from Terraform!' > /mnt/mydir/hello.txt"
+    ]
+  }
 }
